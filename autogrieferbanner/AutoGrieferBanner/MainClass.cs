@@ -79,14 +79,11 @@ namespace AutoGrieferBanner
         }
         public void OnJoin(int who, HandledEventArgs e)
         {
-            Console.WriteLine("who: " + who + " playerscount: " + TShock.Players.Length);
             lock (playerList)
                 playerList.Add(new PlayerObj(who));
         }
         public void OnLeave(int who)
         {
-            Console.WriteLine("who: " + who);
-           // Console.WriteLine(" name: " + TShock.Players[who].Name);
             lock (playerList)
             {
                 for (int i = 0; i < playerList.Count; i++)
@@ -123,7 +120,22 @@ namespace AutoGrieferBanner
                     TileObj newTile = new TileObj();
                     newTile.X = args.X;
                     newTile.Y = args.Y;
-                    newTile.tile = Main.tile[args.X, args.Y];
+                    newTile.active = Main.tile[args.X, args.Y].active;
+                    newTile.checkingLiquid = Main.tile[args.X, args.Y].checkingLiquid;
+                    newTile.Data = Main.tile[args.X, args.Y].Data;
+                    newTile.frameNumber = Main.tile[args.X, args.Y].frameNumber;
+                    newTile.frameX = Main.tile[args.X, args.Y].frameX;
+                    newTile.frameY = Main.tile[args.X, args.Y].frameY;
+                    newTile.lava = Main.tile[args.X, args.Y].lava;
+                    newTile.lighted = Main.tile[args.X, args.Y].lighted;
+                    newTile.liquid = Main.tile[args.X, args.Y].liquid;
+                    newTile.skipLiquid = Main.tile[args.X, args.Y].skipLiquid;
+                    newTile.type = Main.tile[args.X, args.Y].type;
+                    newTile.wall = Main.tile[args.X, args.Y].wall;
+                    newTile.wallFrameNumber = Main.tile[args.X, args.Y].wallFrameNumber;
+                    newTile.wallFrameX = Main.tile[args.X, args.Y].wallFrameX;
+                    newTile.wallFrameY = Main.tile[args.X, args.Y].wallFrameY;
+                    newTile.wire = Main.tile[args.X, args.Y].wire;
                     ply.tileList.Add(newTile);
                     if (ply.tileList.Count == 10)
                     {
@@ -131,12 +143,9 @@ namespace AutoGrieferBanner
                     }
                     else if (ply.tileList.Count >= 20)
                     {
-                        //Console.WriteLine("Player reached limit");
-                        RevertTiles(ply);
-                        TShock.Utils.Ban(args.Player, "Griefing region: "+regName);
-                        
-                    }
-                    args.Handled = true;                    
+                        //RevertTiles(ply);
+                        TShock.Utils.Ban(args.Player, "Griefing region: "+regName);                        
+                    }                  
                 }
             }
           
@@ -145,22 +154,22 @@ namespace AutoGrieferBanner
         {
             foreach (TileObj tile in player.tileList)
             {
-                Main.tile[tile.X, tile.Y].active = tile.tile.active;
-                Main.tile[tile.X, tile.Y].checkingLiquid = tile.tile.checkingLiquid;
-                Main.tile[tile.X, tile.Y].Data = tile.tile.Data;
-                Main.tile[tile.X, tile.Y].frameNumber = tile.tile.frameNumber;
-                Main.tile[tile.X, tile.Y].frameX = tile.tile.frameX;
-                Main.tile[tile.X, tile.Y].frameY = tile.tile.frameY;
-                Main.tile[tile.X, tile.Y].lava = tile.tile.lava;
-                Main.tile[tile.X, tile.Y].lighted = tile.tile.lighted;
-                Main.tile[tile.X, tile.Y].liquid = tile.tile.liquid;
-                Main.tile[tile.X, tile.Y].skipLiquid = tile.tile.skipLiquid;
-                Main.tile[tile.X, tile.Y].type = tile.tile.type;
-                Main.tile[tile.X, tile.Y].wall = tile.tile.wall;
-                Main.tile[tile.X, tile.Y].wallFrameNumber = tile.tile.wallFrameNumber;
-                Main.tile[tile.X, tile.Y].wallFrameX = tile.tile.wallFrameX;
-                Main.tile[tile.X, tile.Y].wallFrameY = tile.tile.wallFrameY;
-                Main.tile[tile.X, tile.Y].wire = tile.tile.wire;
+                Main.tile[tile.X, tile.Y].active = tile.active;
+                Main.tile[tile.X, tile.Y].checkingLiquid = tile.checkingLiquid;
+                Main.tile[tile.X, tile.Y].Data = tile.Data;
+                Main.tile[tile.X, tile.Y].frameNumber = tile.frameNumber;
+                Main.tile[tile.X, tile.Y].frameX = tile.frameX;
+                Main.tile[tile.X, tile.Y].frameY = tile.frameY;
+                Main.tile[tile.X, tile.Y].lava = tile.lava;
+                Main.tile[tile.X, tile.Y].lighted = tile.lighted;
+                Main.tile[tile.X, tile.Y].liquid = tile.liquid;
+                Main.tile[tile.X, tile.Y].skipLiquid = tile.skipLiquid;
+                Main.tile[tile.X, tile.Y].type = tile.type;
+                Main.tile[tile.X, tile.Y].wall = tile.wall;
+                Main.tile[tile.X, tile.Y].wallFrameNumber = tile.wallFrameNumber;
+                Main.tile[tile.X, tile.Y].wallFrameX = tile.wallFrameX;
+                Main.tile[tile.X, tile.Y].wallFrameY = tile.wallFrameY;
+                Main.tile[tile.X, tile.Y].wire = tile.wire;
                 updateTile(tile.X, tile.Y);
             }
             player.tileList = new List<TileObj>();
@@ -183,7 +192,7 @@ namespace AutoGrieferBanner
                 if (ply.TSPlayer.UserID == id)
                     return ply;
             }
-            Console.WriteLine("returned new PlayerObj!");
+           // Console.WriteLine("returned new PlayerObj!");
             return new PlayerObj(-1);
         }  
     }
@@ -192,7 +201,22 @@ namespace AutoGrieferBanner
     {
             public int X { get; set; }
             public int Y { get; set; }
-            public Tile tile { get; set; }
+            public bool active { get; set; }
+            public bool checkingLiquid { get; set; }
+            public TileData Data { get; set; }
+            public byte frameNumber { get; set; }
+            public short frameX { get; set; }
+            public short frameY { get; set; }
+            public bool lava { get; set; }
+            public bool lighted { get; set; }
+            public byte liquid { get; set; }
+            public bool skipLiquid { get; set; }
+            public byte type { get; set; }
+            public byte wall { get; set; }
+            public byte wallFrameNumber { get; set; }
+            public byte wallFrameX { get; set; }
+            public byte wallFrameY { get; set; }
+            public bool wire { get; set; }
     }
 
     #region Player Class
@@ -566,6 +590,11 @@ namespace AutoGrieferBanner
                         }
                         break;
                     }
+              /*  case "debug":
+                    {
+                        args.Player.SendMessage("tile[0] active: " + player.tileList[0].active + " tile[0] type: " + player.tileList[0].type);
+                        break;
+                    }*/
                 default:
                     {
                         args.Player.SendMessage("AB commands available to you:", Color.Yellow);
