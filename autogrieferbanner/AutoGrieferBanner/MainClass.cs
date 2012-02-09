@@ -35,7 +35,7 @@ namespace AutoGrieferBanner
         }
         public override Version Version
         {
-            get { return new Version("1.0"); }
+            get { return new Version("1.0.1"); }
         }
         public override void Initialize()
         {  
@@ -111,12 +111,12 @@ namespace AutoGrieferBanner
             }
             else if (args.Player.UserID > 0 && regName != null)
             {
-                if (RegionTools.IsOwner(args.Player.UserID.ToString(), regName) || args.Player.Group.HasPermission("abedit") || args.Player.Group.Name == "superadmin")
+                if (RegionTools.IsOwner(args.Player.UserID.ToString(), regName) || args.Player.Group.HasPermission("abedit") || args.Player.Group.Name == "superadmin" || ((new int[] { 3, 24, 32, 52, 61, 62, 69, 73, 74, 110, 113, 115 }.Contains(Main.tile[args.X, args.Y].type)) && args.EditType == 0))
                 { 
                     //do nothing :)
                 }
-                else
-                {
+                else 
+                {                                   
                     TileObj newTile = new TileObj();
                     newTile.X = args.X;
                     newTile.Y = args.Y;
@@ -135,7 +135,8 @@ namespace AutoGrieferBanner
                     newTile.wallFrameNumber = Main.tile[args.X, args.Y].wallFrameNumber;
                     newTile.wallFrameX = Main.tile[args.X, args.Y].wallFrameX;
                     newTile.wallFrameY = Main.tile[args.X, args.Y].wallFrameY;
-                    newTile.wire = Main.tile[args.X, args.Y].wire;
+                    newTile.wire = Main.tile[args.X, args.Y].wire;                    
+
                     ply.tileList.Add(newTile);
                     if (ply.tileList.Count == 10)
                     {
